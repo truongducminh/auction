@@ -1,23 +1,37 @@
 var { query } = require('../db.js');
+var { hashCode } = require('../hashCode.js');
+var { verify } = require('./forgotpassword');
 
 module.exports = (req,res) => {
-    if (!req.body.code) return res.send('missing parameters');
-    var data = { success: 0, error: [] };
-    var { code } = req.body;
-    // if code is invalid
-    // send('wrong code');
-
-    // if code is valid
-    var password = 'random';
-    var sql = 'UPDATE "users" SET password=$1';
-    var params = [password];
-    query(sql,params)
-    .then(result => {
-        // send password
-    })
-    .catch(err => {
-        console.log(err);
-        data.error.push({ id: 102, message: 'Query error' });
+    var newPassword;
+    var verificationCode = req.params.verificationCode;
+    console.log(verificationCode);
+    var object = verify(verificationCode);
+    if (object) {
+        console.log(object);
+        hashCode()
+        .then(randomCode => {
+            newPassword = randomCode;
+            var sql = 'UPDATE "users" SET password=$1 WHERE id_user=$2';
+            var params = [newPassword,object.id];
+            return query(sql,params);
+        })
+        .then(result => {
+            if (result.rowCount > 0) {
+                clearTimeout(object.countdown);
+                delete object;
+                res.send('Your new password is: ' + newPassword);
+            }
+            else data.error.push({ id: 102, message: 'Reset password failed' });
+            res.send();
+        })
+        .catch(err => {
+            data.error.push({ id: 102, message: err + '' });
+            res.send(data);
+        });
+    }
+    else {
+        data.error.push({ id: 102, message: 'wrong verification code' });
         res.send(data);
-    });
+    }
 };

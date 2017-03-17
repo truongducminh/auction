@@ -6,13 +6,13 @@
         <style media="screen">
             .image { height: 150px; }
             .image img { max-width: 100%; max-height: 100%; }
-            .box { display: inline-block; width: 150px; height: 200px; margin: 4px; border: 1px solid #444; }
+            .box { display: inline-block; width: 150px; height: 250px; margin: 4px; border: 1px solid #444; }
             .box div { text-align: center; }
         </style>
     </head>
     <body>
         <% products.forEach(e => { %>
-            <%-'<div class="box" id="' + e.id + '"><div class="image"><img src="' + e.image + '" /></div><div>' + e.price + '</div><div class="timeleft"></div></div>' %>
+            <%-'<div class="box" id="' + e.id + '"><div class="image"><img src="' + e.image + '" /></div><div class="display-price">' + e.displayPrice + '</div><div class="timeleft"></div><button type="button">BID</button></div>' %>
         <% }) %>
 
         <script src="lib/jquery-3.1.1.min.js"></script>
@@ -23,11 +23,16 @@
                 socket.on('SERVER_SEND_HOME', data => {
                     console.log(data);
                 });
-                // socket.on('SERVER_COUNTDOWN', timeleftArray => {
-                //     timeleftArray.forEach(e => {
-                //         $('#' + e.id + ' .timeleft').text(e.timeleft);
-                //     });
-                // })
+                socket.on('SERVER_SEND_HOME', products => {
+                    products.forEach(e => {
+                        $('#' + e.id + ' .timeleft').text(e.timeleft);
+                        $('#' + e.id + ' .display-price').text(e.displayPrice);
+                    });
+                })
+                $('button').click(function(){
+                    var id = $(this).parent()[0].id;
+                    socket.emit('CLIEN_SEND_BID', id);
+                });
             });
         </script>
     </body>
