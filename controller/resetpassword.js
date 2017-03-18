@@ -8,7 +8,6 @@ module.exports = (req,res) => {
     console.log(verificationCode);
     var object = verify(verificationCode);
     if (object) {
-        console.log(object);
         hashCode()
         .then(randomCode => {
             newPassword = randomCode;

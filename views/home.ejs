@@ -12,7 +12,7 @@
     </head>
     <body>
         <% products.forEach(e => { %>
-            <%-'<div class="box" id="' + e.id + '"><div class="image"><img src="' + e.image + '" /></div><div class="display-price">' + e.displayPrice + '</div><div class="timeleft"></div><button type="button">BID</button></div>' %>
+            <%-'<div class="box" id="' + e.id + '"><div class="image"><img src="' + e.image + '" /></div><div class="display-current-price">' + e.displayPrice + '</div><div class="timeleft"></div><button type="button">BID</button></div>' %>
         <% }) %>
 
         <script src="lib/jquery-3.1.1.min.js"></script>
@@ -26,7 +26,7 @@
                 socket.on('SERVER_SEND_HOME', products => {
                     products.forEach(e => {
                         $('#' + e.id + ' .timeleft').text(e.timeleft);
-                        $('#' + e.id + ' .display-price').text(e.displayPrice);
+                        $('#' + e.id + ' .display-current-price').text(e.displayCurrentPrice);
                     });
                 })
                 $('button').click(function(){

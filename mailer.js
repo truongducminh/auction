@@ -6,6 +6,7 @@ transporter = nodemailer.createTransport({
         pass: 'Minalinsky!1011-'
     }
 });
+var config = require('./config.js');
 
 function sendResetPasswordEmail(receiver,firstname, verificationCode) {
     var mailOptions = {
@@ -23,7 +24,7 @@ function sendResetPasswordEmail(receiver,firstname, verificationCode) {
                     <br/>Simply click on the button to get a new password:
                 </div>
                 <a
-                    href="http://192.168.1.151:3000/resetPassword/${verificationCode}"
+                    href="${config.DOMAIN_NAME}/resetPassword/${verificationCode}"
                     style="display:block;text-decoration:none;font-size:200%;color:#008;background:#aaf;width:200px;padding:15px;"
                     >
                     Reset password

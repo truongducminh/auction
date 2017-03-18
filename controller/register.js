@@ -4,13 +4,15 @@ var moment = require('moment');
 var registerQueue = {};
 
 module.exports = (req,res) => {
-    var { username,email,phone,firstname,lastname,password } = req.body;
-    var data = { success: 0, error: [] };
+    var { firstname,lastname,email,phone,username,password } = req.body;
+    var data = { success: false };
     if (!req.body.code) {
         var sql = 'SELECT username,email,sodienthoai FROM "users" WHERE username=$1 OR email=$2 OR sodienthoai=$3';
         var params = [username,email,phone];
+        console.log(params);
         query(sql,params)
         .then(result => {
+            console.log(result);
             if (result.rowCount == 0) {
                 hashCode()
                 .then(randomCode => {
@@ -20,8 +22,7 @@ module.exports = (req,res) => {
                         username,email,phone,firstname,lastname,password,
                         countdown: setTimeout(() => delete registerQueue[verificationCode], 600*1000)
                     };
-                    console.log(registerQueue);
-                    data.success = 1;
+                    data.success = true;
                     res.send(JSON.stringify(data));
                 })
                 .catch(err => {
@@ -30,16 +31,17 @@ module.exports = (req,res) => {
             }
             else {
                 result.rows.forEach(e => {
-                    if (e.sodienthoai == phone) data.error.push({ id: 99, message: 'Phone number is taken' });
-                    if (e.email == email) data.error.push({ id: 98, message: 'Email is taken' });
-                    if (e.username == username) data.error.push({ id: 97, message: 'Username is taken' });
+                    console.log(e);
+                    if (e.email == email) data.error = { id: 98, message: 'Email is taken' };
+                    else if (e.sodienthoai == phone) data.error = { id: 99, message: 'Phone number is taken' };
+                    else if (e.username == username) data.error = { id: 97, message: 'Username is taken' };
                 });
                 res.send(JSON.stringify(data));
             }
         })
         .catch(err => {
             console.log(err);
-            data.error.push({ id: 102, message: 'Query error' });
+            data.error = { id: 102, message: 'Query error' };
             res.send(JSON.stringify(data));
         });
     }
@@ -47,12 +49,12 @@ module.exports = (req,res) => {
         var verificationCode = req.body.code;
         var info = registerQueue[verificationCode];
         if (!info) {
-            data.error.push({ id: 101, message: 'Wrong verification code' });
+            data.error = { id: 101, message: 'Wrong verification code' };
             res.send(JSON.stringify(data));
         }
         else {
             if (email != info.email) {
-                data.error.push({ id: '12', message: 'wrong email'});
+                data.error = { id: 102, message: 'wrong email' };
                 return res.send(JSON.stringify(data));
             }
             console.log(registerQueue);
@@ -63,9 +65,9 @@ module.exports = (req,res) => {
                 if (result.rowCount > 0) {
                     clearTimeout(info.countdown);
                     delete registerQueue[verificationCode];
-                    data.success = 1;
+                    data.success = true;
                 }
-                else data.error.push({});
+                else data.error = { id: 12, message: 'database insert error' };
                 res.send(JSON.stringify(data));
             })
             .catch(error => {
