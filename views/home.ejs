@@ -11,14 +11,13 @@
         </style>
     </head>
     <body>
-        <input type="text" id="txt-username"><br>
-        <input type="password" id="txt-password"><br>
+        <button type="button" id="btn-login">Login</button><br>
         <% products.forEach(e => { %>
             <%-'<div class="box" id="' + e.id + '">' %>
                 <%-'<div class="image"><img src="' + e.image + '" /></div>' %>
                 <%-'<div class="display-current-price">' + e.displayPrice + '</div>' %>
                 <%-'<div class="timeleft"></div>' %>
-                <%-'<button type="button">BID</button>' %>
+                <%-'<button type="button" id="btn-bid">BID</button>' %>
             <%-'</div>' %>
         <% }) %>
 
@@ -27,11 +26,17 @@
         <script type="text/javascript">
             $(document).ready(() => {
                 var socket = io();
-                $.post('/login', { username: 'thanhtu', password: '1' }, function (data) {
-                    console.log(data);
-                });
-                socket.on('SERVER_SEND_HOME', data => {
-                    console.log(data);
+                var token = '';
+                $('#btn-login').click(function () {
+                    $.ajax({
+                        url: '/login',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ username: 'thanhtu', password: '1'})
+                    }).done(function (data) {
+                        token = JSON.parse(data).token;
+                        console.log(token);
+                    });
                 });
                 socket.on('SERVER_SEND_HOME', products => {
                     products.forEach(e => {
@@ -39,9 +44,9 @@
                         $('#' + e.id + ' .display-current-price').text(e.displayCurrentPrice);
                     });
                 })
-                $('button').click(function(){
+                $('#btn-bid').click(function(){
                     var id = $(this).parent()[0].id;
-                    socket.emit('CLIEN_SEND_BID', id);
+                    socket.emit('CLIEN_SEND_BID', { token, productId: id });
                 });
             });
         </script>

@@ -28,7 +28,7 @@ app.get('/products', (req,res) => res.render('home',{ products: getProducts() })
 
 setInterval(() => io.emit('SERVER_SEND_HOME', getProducts()),1000);
 io.on('connection', socket => {
-    console.log("a user connected as: " + socket.id);
+    console.log("a user connected as : " + socket.id);
     socket.emit('SERVER_SEND_HOME', getProducts());
     socket.on('CLIEN_SEND_BID', data => require('./controller/io.client-send-bid.js')(io,socket,data));
 });

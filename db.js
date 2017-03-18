@@ -1,6 +1,6 @@
 var pg = require('pg');
 var config = {
-    host: 'localhost', // Server hosting the postgres database
+    host: '127.0.0.1', // Server hosting the postgres database
     database: 'DauGia', //env var: PGDATABASE
     user: 'postgres', //env var: PGUSER
     password: '1', //env var: PGPASSWORD
@@ -17,9 +17,9 @@ function query(sql,params) {
             if (err)
                 return reject(err);
             client.query(sql,params, (err, result) => {
-                if (err)
-                    return reject(err);
-                return resolve({ rowCount: result.rowCount, rows: result.rows });
+                if (err) reject(err);
+                else resolve({ rowCount: result.rowCount, rows: result.rows });
+                done();
             });
         })
     });

@@ -4,7 +4,6 @@ var { getProducts,bid } = require('../model/product-manager.js');
 var moment = require('moment');
 
 module.exports = (io,socket,data) => {
-    console.log(data);
     var { token,productId } = data;
     verify(token)
     .then(function (decoded) {
