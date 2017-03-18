@@ -24,7 +24,7 @@ function timeleftFormat(duration) {
 
 function loadProduct() {
     var sql = `SELECT id_sp,ten_sp,gia,hinh,ngaydang,ngaybatdau,ngayketthuc,mo_ta_tom_tat,mota,bid_amount,
-        ten_loai_sp,
+        ten_loai_sp,id_user_cao_nhat,
         id_user_ban,ho,ten,sodienthoai
     	FROM san_pham
         INNER JOIN users ON san_pham.id_user_ban = users.id_user
@@ -57,7 +57,7 @@ function loadProduct() {
                 bidAmount: arrSP[i].bid_amount,
                 duration: parseInt((q - t) / 1000, 10),
             };
-            query('SELECT ten,ho FROM "users" WHERE id_user=$1',[arrSP[i].id_user_cao_nhat])
+            query('SELECT id_user,ten,ho FROM "users" WHERE id_user=$1',[arrSP[i].id_user_cao_nhat])
             .then(function (result1) {
                 if (result1.rowCount > 0) {
                     products[key].highestUserId = result1.rows[0].id_user;
