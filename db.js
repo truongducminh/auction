@@ -12,13 +12,11 @@ pg.types.setTypeParser(1184, str => str);
 var pool = new pg.Pool(config);
 
 function query(sql,params) {
-    console.log(sql);
     return new Promise(function(resolve, reject) {
         pool.connect((err, client, done) => {
             if (err)
                 return reject(err);
             client.query(sql,params, (err, result) => {
-                console.log(result.rows);
                 if (err)
                     return reject(err);
                 return resolve({ rowCount: result.rowCount, rows: result.rows });
