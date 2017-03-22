@@ -3,15 +3,18 @@ var { verify,getNewToken } = require('../jwt.js');
 
 module.exports = (req,res) => {
     var { token } = req.body;
+    var obj;
     var data = { success: false };
     verify(token)
     .then(function(decoded){
-        var sql = 'SELECT * FROM "users" WHERE username=$1';
-        var params = [decoded.username];
+        obj = decoded;
+        var sql = 'SELECT ho as lastName, ten as firstName, sodu as balance FROM "users" WHERE id_user=$1 AND username=$2 AND sodienthoai=$3';
+        var params = [decoded.id,decoded.username,decoded.phone];
         return query(sql,params);
     })
     .then(result => {
         if (result.rowCount > 0) {
+            console.log('user ' + obj.id + ' - ' + obj.username + ' has relogin');
             data.profile = result.rows[0];
             data.token = getNewToken(obj);
             data.success = true;
@@ -23,8 +26,8 @@ module.exports = (req,res) => {
         }
     })
     .catch(function(error){
-        console.log(err);
-        data.error = { id: 81, message: err + '' };
+        console.log(error);
+        data.error = { id: 104, message: error + '\nissue at ' + moment().format() };
         res.send(JSON.stringify(data));
     });
 };

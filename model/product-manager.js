@@ -35,14 +35,15 @@ function loadProduct() {
     query(sql,[moment().format()])
     .then(result => {
         var arrSP = result.rows;
+        products = {};
         for (var i = 0; i < arrSP.length; i++) {
             var key = arrSP[i].id_sp;
             products[key] = {
                 image: arrSP[i].hinh,
                 name: arrSP[i].ten_sp,
-                issueAt: arrSP[i].ngaydang,
-                startAt: arrSP[i].ngaybatdau,
-                endAt: arrSP[i].ngayketthuc,
+                issueAt: arrSP[i].ngaydang.substr(0, arrSP[i].ngaydang.length - 6).replace(' ',' lúc '),
+                startAt: arrSP[i].ngaybatdau.substr(0, arrSP[i].ngaydang.length - 6).replace(' ',' lúc '),
+                endAt: arrSP[i].ngayketthuc.substr(0, arrSP[i].ngaydang.length - 6).replace(' ',' lúc '),
                 displayCurrentPrice: arrSP[i].gia.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '.000',
                 displayNextPrice: (arrSP[i].gia + arrSP[i].bid_amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '.000',
                 category: arrSP[i].ten_loai_sp,
@@ -114,15 +115,23 @@ function bid(productId,bidderId,bidderName, cb) {
     });
 }
 
-function newProduct(name,image,startAt,endAt,price,bidAmount,sellerId, cb) {
-    var sql = 'INSERT INTO san_pham(ten_sp,hinh,ngaydang,ngaybatdau,ngayketthuc,gia,bid_amount,id_user_ban) VALUES($1,$2,$3,$4,$5,$6,$7)';
-    var params = [name,image,moment().format(),moment(startAt).format(),moment(endAt).format(),price,bidAmount,sellerId];
+function newProduct(productName,productImage,productStartPrice,productCeilPrice,productDescription,duration,bidAmount,categoryId,sellerId, cb) {
+    var sql = `INSERT INTO san_pham(ten_sp,hinh,mota,
+        ngaydang,ngaybatdau,ngayketthuc,
+        giasan,giatran,gia,
+        bid_amount,id_loai_sp,id_user_ban)
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`;
+    var params = [productName,productImage,productDescription,
+        moment().format(),moment().format(),moment(Date.now() + duration*60*60*1000).format(),
+        productStartPrice/1000,productCeilPrice/1000,productStartPrice/1000,
+        bidAmount/1000,categoryId,sellerId];
     query(sql,params)
     .then(result => {
+        console.log('a product has been registered as : ' + productName);
         if (result.rowCount > 0) {
             setTimeout(() => {
                 loadProduct();
-            },startAt - Date.now());
+            },1000);
             return cb(undefined);
         }
     })
@@ -131,4 +140,4 @@ function newProduct(name,image,startAt,endAt,price,bidAmount,sellerId, cb) {
     });
 }
 
-module.exports = { getProducts, bid };
+module.exports = { getProducts, bid, newProduct };
