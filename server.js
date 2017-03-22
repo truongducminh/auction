@@ -4,7 +4,8 @@ app.set('view engine','ejs');
 app.set('views','views');
 app.use(express.static('public'));
 var bodyParser = require('body-parser');
-var parser = bodyParser.json();
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
+var jsonParser = bodyParser.json();
 
 var config = require('./config.js');
 var { getProducts, bid } = require('./model/product-manager.js');
@@ -18,12 +19,12 @@ server.listen(config.PORT, () => {
     });
 });
 
-app.post('/register', parser, require('./controller/register.js'));
-app.post('/login', parser, require('./controller/login.js'));
-app.post('/user', parser, require('./controller/user.js'));
-app.post('/forgotPassword/', parser, require('./controller/forgotpassword.js').requestResetPassword);
+app.post('/register', jsonParser, require('./controller/register.js'));
+app.post('/login', jsonParser, require('./controller/login.js'));
+app.post('/user', jsonParser, require('./controller/user.js'));
+app.post('/forgotPassword/', jsonParser, require('./controller/forgotpassword.js').requestResetPassword);
 app.get('/resetPassword/:verificationCode', require('./controller/resetpassword.js'));
-app.get('/postProduct', (req,res) => require('./controller/postProduct.js'));
+app.post('/postProduct', urlencodedParser, require('./controller/postproduct.js'));
 app.get('/products', (req,res) => res.render('home',{ products: getProducts() }));
 
 setInterval(() => io.emit('SERVER_SEND_HOME', getProducts()),1000);

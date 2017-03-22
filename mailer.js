@@ -10,18 +10,18 @@ var config = require('./config.js');
 
 function sendResetPasswordEmail(receiver,firstname, verificationCode) {
     var mailOptions = {
-        from: '"Trương Đức Minh" <truongducminh.dev@gmail.com>',
+        from: '"Team BlueShark" <team.blueshark@gmail.com>',
         to: receiver,
-        subject: 'BlueShark account reset password',
+        subject: 'Làm mới mật khẩu tài khoản BlueShark',
         html: `<div style="width:80%;border:1px solid #444;">
             <div style="height:50px;background:#00d;font-size:200%;text-align:center;color:#fff;line-height:50px;">
                 BlueShark
             </div>
             <div style="padding:2%">
                 <div style="font-size:120%;line-height:30px;margin:10px 0;">
-                    Hello ${firstname},
-                    <br/>We receive a request to reset your BlueShark account. We're here to help!
-                    <br/>Simply click on the button to get a new password:
+                    Chào ${firstname},
+                    <br/>Gần đây chúng tôi nhận được yêu cầu làm mới mật khẩu tài khoản BlueShark của bạn. Chúng tôi ở đây để giúp bạn!
+                    <br/>Đơn giản chỉ cần nhấn vào nút bên dưới để nhận mật khẩu mới:
                 </div>
                 <a
                     href="${config.DOMAIN_NAME}/resetPassword/${verificationCode}"
@@ -30,7 +30,8 @@ function sendResetPasswordEmail(receiver,firstname, verificationCode) {
                     Reset password
                 </a>
                 <div style="font-size:120%;line-height:30px;margin:10px 0;">
-                    Thank you!
+                    Cám ơn bạn vì đã sử dụng dịch vụ của chúng tôi!
+                    <br/><br/>BlueShark
                 </div>
             </div>
         </div>`

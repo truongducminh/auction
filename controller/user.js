@@ -6,11 +6,6 @@ module.exports = (req,res) => {
     var data = { success: false };
     verify(token)
     .then(function(decoded){
-        var now = Math.floor(Date.now()/(1000));
-        if (decoded.exp*1000 < now) {
-            data.error = { id: 71, message: 'you have been log out' };
-            return res.send(JSON.stringify(data));
-        }
         var sql = 'SELECT * FROM "users" WHERE username=$1';
         var params = [decoded.username];
         return query(sql,params);

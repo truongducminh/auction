@@ -114,9 +114,9 @@ function bid(productId,bidderId,bidderName, cb) {
     });
 }
 
-function newProduct(name,image,startAt,duration,price,bidAmount,sellerId, cb) {
+function newProduct(name,image,startAt,endAt,price,bidAmount,sellerId, cb) {
     var sql = 'INSERT INTO san_pham(ten_sp,hinh,ngaydang,ngaybatdau,ngayketthuc,gia,bid_amount,id_user_ban) VALUES($1,$2,$3,$4,$5,$6,$7)';
-    var params = [name,image,moment().format(),moment(startAt).format(),moment(startAt + duration).format(),price,bidAmount,sellerId];
+    var params = [name,image,moment().format(),moment(startAt).format(),moment(endAt).format(),price,bidAmount,sellerId];
     query(sql,params)
     .then(result => {
         if (result.rowCount > 0) {
