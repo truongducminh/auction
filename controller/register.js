@@ -16,7 +16,9 @@ module.exports = (req,res) => {
                 hashCode()
                 .then(randomCode => {
                     var verificationCode = randomCode;
-                    sendRegisterEmail(email,firstname,verificationCode);
+                    return sendRegisterEmail(email,firstname,verificationCode);
+                })
+                .then(verificationCode => {
                     registerQueue[verificationCode] = {
                         username,email,phone,firstname,lastname,password,
                         countdown: setTimeout(() => delete registerQueue[verificationCode], 600*1000)
