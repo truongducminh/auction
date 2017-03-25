@@ -82,21 +82,22 @@ function loadProduct() {
     });
 }
 
-function getProducts(io) {
+function getProducts() {
     var data = [];
     Object.keys(products).forEach(key => {
         var product = products[key];
         var productInfo = productsInfo[key];
-        if (productInfo.duration === 1 || productInfo.price === product.ceilPrice) {
-            product.isOn = false;
-            setTimeout(() => {
-                delete productsInfo[key];
-                delete products[key];
-            }, 500);
-        }
         productInfo.duration--;
         var timeleft = timeleftFormat(productInfo.duration);
-        data.push(Object.assign({ id: key, timeleft }, product));
+        if (productInfo.duration === 0 || productInfo.price === product.ceilPrice) {
+            product.isOn = false;
+            data.push(Object.assign({ id: key, timeleft }, product));
+            delete productsInfo[key];
+            delete products[key];
+        }
+        else {
+            data.push(Object.assign({ id: key, timeleft }, product));
+        }
     });
     return data;
 }
