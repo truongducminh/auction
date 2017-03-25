@@ -1,5 +1,6 @@
 var { query } = require('../db.js');
 var { hashCode } = require('../hashCode.js');
+var { sendRegisterEmail } = require('../mailer.js');
 var moment = require('moment');
 var registerQueue = {};
 
@@ -15,7 +16,7 @@ module.exports = (req,res) => {
                 hashCode()
                 .then(randomCode => {
                     var verificationCode = randomCode;
-                    //send code
+                    sendRegisterEmail(email,firstname,verificationCode);
                     registerQueue[verificationCode] = {
                         username,email,phone,firstname,lastname,password,
                         countdown: setTimeout(() => delete registerQueue[verificationCode], 600*1000)

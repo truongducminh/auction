@@ -1,3 +1,4 @@
+var config = require('./config.js');
 var nodemailer = require('nodemailer');
 transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -6,14 +7,48 @@ transporter = nodemailer.createTransport({
         pass: 'blueshark!101'
     }
 });
-var config = require('./config.js');
+var mailOptions = {
+    from: '"Team BlueShark" <team.blueshark@gmail.com>'
+};
+
+function sengRegisterEmail(receiver,firstname,verificationCode) {
+    mailOptions.to = receiver;
+    mailOptions.subject = 'Đăng ký tài khoản BlueShark';
+    mailOptions.html =  `<div style="width:80%;border:1px solid #444;">
+            <div style="height:50px;background:#00d;font-size:200%;text-align:center;color:#fff;line-height:50px;">
+                BlueShark
+            </div>
+            <div style="padding:2%">
+                <div style="font-size:120%;line-height:30px;margin:10px 0;">
+                    Chào ${firstname},
+                    <br/>Bạn hoặc ai đó đã dùng email này để đăng ký tài khoản BlueShark.
+                    <br/>Bạn cần nhập đoạn mã bên dưới để hoàn thành quá trình đăng ký:
+                </div>
+                <span style="display:block;text-decoration:none;text-align:center;font-size:200%;color:#008;background:#aaf;width:200px;padding:15px;">
+                    ${verificationCode}
+                </span>
+                <div style="font-size:120%;line-height:30px;margin:10px 0;">
+                    Cám ơn bạn vì đã sử dụng dịch vụ của chúng tôi!
+                    <br/><br/>BlueShark
+                </div>
+            </div>
+        </div>`
+    };
+    return new Promise(function(resolve, reject) {
+        transporter.sendMail(mailOptions, (err, info) => {
+            if (err) return reject(err)
+            else {
+                console.log('Message %s sent: %s', info.messageId, info.response);
+                return resolve(verificationCode);
+            }
+        });
+    });
+}
 
 function sendResetPasswordEmail(receiver,firstname, verificationCode) {
-    var mailOptions = {
-        from: '"Team BlueShark" <team.blueshark@gmail.com>',
-        to: receiver,
-        subject: 'Làm mới mật khẩu tài khoản BlueShark',
-        html: `<div style="width:80%;border:1px solid #444;">
+    mailOptions.to = receiver;
+    mailOptions.subject = 'Làm mới mật khẩu tài khoản BlueShark';
+    mailOptions.html =  `<div style="width:80%;border:1px solid #444;">
             <div style="height:50px;background:#00d;font-size:200%;text-align:center;color:#fff;line-height:50px;">
                 BlueShark
             </div>
