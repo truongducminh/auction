@@ -1,10 +1,11 @@
 var pg = require('pg');
 var config = {
-    host: '127.0.0.1', // Server hosting the postgres database
-    database: 'DauGia', //env var: PGDATABASE
-    user: 'postgres', //env var: PGUSER
-    password: '1', //env var: PGPASSWORD
+    host: 'ec2-23-21-184-181.compute-1.amazonaws.com', // Server hosting the postgres database
+    database: 'dlt9dfftqlhqh', //env var: PGDATABASE
+    user: 'cxajsfuqeahvtg', //env var: PGUSER
+    password: '5a38993b7a2180f51fd75c36f0f2172398e3dfac7ee86fdb7a4761c9179ea80c', //env var: PGPASSWORD
     port: 5432, //env var: PGPORT
+    ssl: true,
     max: 10, // max number of clients in the pool
     idleTimeoutMillis: 30000, // how long a client is allowed to remain idle before being closed
 };
@@ -26,14 +27,3 @@ function query(sql,params) {
 }
 
 module.exports = {query};
-
-// query('SELECT username,email FROM "User" WHERE "username"=$1',['minhtd0107'])
-// query('INSERT INTO "User"(username,email,registeddate) VALUES($1,$2,$3)',['minhtd','minhtd@gmail.com',moment().format()])
-// query('UPDATE "User" SET username=$1 WHERE id=$2',['minh',2])
-// query('DELETE FROM "User" WHERE id=$1',[1])
-// .then(result => {
-//     console.log({ rowCount: result.rowCount, rows: result.rows });
-// })
-// .catch(err => {
-//     console.log(err);
-// });
