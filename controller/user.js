@@ -8,14 +8,14 @@ module.exports = (req,res) => {
     verify(token)
     .then(function(decoded){
         obj = decoded;
-        var sql = 'SELECT ho as lastName, ten as firstName, sodu as balance FROM "users" WHERE id_user=$1 AND username=$2 AND sodienthoai=$3';
+        var sql = 'SELECT ho as lastName, ten as firstName, sodu*1000 as balance FROM "users" WHERE id_user=$1 AND username=$2 AND sodienthoai=$3';
         var params = [decoded.id,decoded.username,decoded.phone];
         return query(sql,params);
     })
     .then(result => {
         if (result.rowCount > 0) {
             console.log('user ' + obj.id + ' - ' + obj.username + ' has relogin');
-            data.profile = result.rows[0];
+            data.profile = Object.assign({ id: obj.id },result.rows[0]);
             data.token = getNewToken(obj);
             data.success = true;
             res.send(JSON.stringify(data));

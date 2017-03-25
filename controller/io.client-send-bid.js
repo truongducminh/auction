@@ -22,8 +22,8 @@ module.exports = (io,socket,data) => {
             return socket.emit('SERVER_SEND_POST_RESULT', { success: 0, error: 'account does not exist' });
         }
         var user = result.rows[0];
-        bid(productId, user.id_user, user.ho + ' ' + user.ten, function (error) {
-            if (error) return socket.emit('SERVER_SEND_BID_RESULT', { success: 0, error: error + '\nissue at ' + moment().format() });
+        bid(productId, user.id_user, user.ho + ' ' + user.ten, function (error, productInfo) {
+            if (error) return socket.emit('SERVER_SEND_BID_ERROR', { success: 0, error: error + '\nissue at ' + moment().format() });
             return io.emit('SERVER_SEND_HOME', getProducts());
         });
     })

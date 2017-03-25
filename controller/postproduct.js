@@ -44,17 +44,19 @@ module.exports = (req,res) => {
             query(sql,params)
             .then(function(result){
                 if (result.rowCount <= 0) return data.error = { id: 98, message: 'wrong login information, please login again' };
-                var userId = result.rows[0].id_user;
                 newProduct(productInfo.productName, productInfo.image,
                     productInfo.productStartPrice, productInfo.productCeilPrice,
                     productInfo.productDescription, productInfo.duration, productInfo.bidAmount,
-                    productInfo.categoryId, userId,
+                    productInfo.categoryId, id,
                     error => {
                         if (error) {
                             console.log(error);
                             data.error = { id: 104, message: error + '\nissue at ' + moment().format() };
                         }
-                        else data.success = true;
+                        else {
+                            console.log('user ' + username + ' has registered a product : ' + productInfo.productName);
+                            data.success = true;
+                        }
                         res.send(data);
                     }
                 );
