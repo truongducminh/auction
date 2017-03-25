@@ -1,5 +1,6 @@
 var config = require('./config.js');
 var nodemailer = require('nodemailer');
+var http = require('http');
 transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -10,6 +11,25 @@ transporter = nodemailer.createTransport({
 var mailOptions = {
     from: '"Team BlueShark" <team.blueshark@gmail.com>'
 };
+
+function sendRegisterSMS(phone,code) {
+    return new Promise(function(resolve, reject) {
+        http.get({
+            host: 'tuanxuong.com',
+            path: '/api/smsduy.php?phone=' + phone + '&code=' + code
+        }, function(response) {
+            var body = '';
+            response.on('data', function(d) {
+                body += d;
+            });
+            response.on('end', function() {
+                var parsed = JSON.parse(body);
+                // if (body) return reject(new Error(body));
+                // return resolve(parsed)
+            });
+        });
+    });
+}
 
 function sendRegisterEmail(receiver,firstname,verificationCode) {
     mailOptions.to = receiver;
@@ -80,4 +100,4 @@ function sendResetPasswordEmail(receiver,firstname, verificationCode) {
     });
 }
 
-module.exports = { sendRegisterEmail,sendResetPasswordEmail };
+module.exports = { sendRegisterEmail,sendResetPasswordEmail,sendRegisterSMS };

@@ -19,7 +19,7 @@ module.exports = (req,res) => {
         if (result.rowCount > 0) {
             console.log('a user has login as : ' + result.rows[0].username);
             data.profile = result.rows[0];
-            data.token = sign({ id: result.rows[0].id_user, username: result.rows[0].username, phone: result.rows[0].sodienthoai });
+            data.token = sign({ id: result.rows[0].id, username: result.rows[0].username, phone: result.rows[0].phone });
             data.success = true;
             res.send(JSON.stringify(data));
         }
