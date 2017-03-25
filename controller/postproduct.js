@@ -4,11 +4,15 @@ var { verify,getNewToken } = require('../jwt.js');
 var { DIRNAME, DOMAIN_NAME } = require('../config.js')
 var formidable = require('formidable');
 var moment = require('moment');
+var fs = require('fs');
 
 module.exports = (req,res) => {
     var form = new formidable.IncomingForm();
+    var imageName = '';
     var productInfo = {};
+    var data = { success: false };
     form.on('fileBegin', function(name, file) {
+        imageName = file.name;
         file.path = DIRNAME + '/public/img/product/'  + file.name;
         productInfo.image = DOMAIN_NAME + '/img/product/'  + file.name;
     });
@@ -18,9 +22,8 @@ module.exports = (req,res) => {
     form.on('error', function(err) {
         console.log(err);
         data.error = { id: 104, message: err + '\nissue at ' + moment().format() };
-        res.send(data);
     });
-    var data = { success: false };
+    if (data.error) return res.send(data);
     new Promise(function(resolve, reject) {
         form.parse(req, function(err, fields, files) {
             if (err) return reject(err);
@@ -52,6 +55,7 @@ module.exports = (req,res) => {
                         if (error) {
                             console.log(error);
                             data.error = { id: 104, message: error + '\nissue at ' + moment().format() };
+                            fs.unlink(DIRNAME + '/public/img/product/'  + imageName);
                         }
                         else {
                             console.log('user ' + username + ' has registered a product : ' + productInfo.productName);
@@ -65,6 +69,7 @@ module.exports = (req,res) => {
                 console.log(error);
                 data.error = { id: 104, message: error + '\nissue at ' + moment().format() };
                 res.send(data);
+                fs.unlink(DIRNAME + '/public/img/product/'  + imageName);
             });
         }
     })
@@ -72,5 +77,6 @@ module.exports = (req,res) => {
         console.log(error);
         data.error = { id: 104, message: error + '\nissue at ' + moment().format() };
         res.send(data);
+        fs.unlink(DIRNAME + '/public/img/product/'  + imageName);
     });
 };

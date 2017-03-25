@@ -65,6 +65,7 @@ module.exports = (req,res) => {
                     clearTimeout(info.countdown);
                     delete registerQueue[verificationCode];
                     data.success = true;
+                    console.log('a user has registered as: ' + info.username);
                 }
                 else data.error = { id: 12, message: 'database insert error' };
                 res.send(JSON.stringify(data));
