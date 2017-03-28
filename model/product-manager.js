@@ -139,8 +139,11 @@ function newProduct(productName,productImage,productStartPrice,productCeilPrice,
         bidAmount/1000,categoryId,sellerId];
     query(sql,params)
     .then(result => {
-        loadProduct();
-        return cb(undefined);
+        if (result.rowCount > 0) {
+            loadProduct();
+            return cb(undefined);
+        }
+        return cb(new Error('Failed to insert new product'));
     })
     .catch(error => {
         return cb(error);
