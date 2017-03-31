@@ -29,10 +29,10 @@ function loadProduct() {
     	FROM san_pham
         INNER JOIN users ON san_pham.id_user_ban = users.id_user
         INNER JOIN loai_sp ON san_pham.id_loai_sp = loai_sp.id_loai_sp
-        WHERE ngaybatdau < $1 AND $1 < ngayketthuc AND gia < giatran
+        WHERE ngaybatdau <= $1 AND $1 < ngayketthuc AND gia < giatran
         ORDER BY ngayketthuc DESC`;
     var params = [moment().format()];
-    query(sql,[moment().format()])
+    query(sql,params)
     .then(result => {
         var arrSP = result.rows;
         products = {};
@@ -76,6 +76,7 @@ function loadProduct() {
                 console.log(err);
             });
         }
+        console.log('number of loaded product : ' + arrSP.length);
     })
     .catch(err => {
         console.log(err);

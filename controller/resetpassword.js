@@ -1,6 +1,7 @@
 var { query } = require('../db.js');
 var { hashCode } = require('../hashCode.js');
 var { verify } = require('./forgotpassword');
+var md5 = require('blueimp-md5');
 
 module.exports = (req,res) => {
     var newPassword;
@@ -10,7 +11,7 @@ module.exports = (req,res) => {
     if (object) {
         hashCode()
         .then(randomCode => {
-            newPassword = randomCode;
+            newPassword = md5(randomCode);
             var sql = 'UPDATE "users" SET password=$1 WHERE id_user=$2';
             var params = [newPassword,object.id];
             return query(sql,params);
